@@ -1,56 +1,30 @@
-# SQLADMIN-WEB
+## ¿ª·¢
 
-SQLADMIN å‰ç«¯æºç 
+```bash
+# ¿ËÂ¡ÏîÄ¿
+git clone https://gitee.com/y_project/RuoYi-Vue
 
-#### é¡¹ç›®æºç 
+# ½øÈëÏîÄ¿Ä¿Â¼
+cd ruoyi-ui
 
-|     |   åç«¯æºç   |   å‰ç«¯æºç   |
-|---  |--- | --- |
-|  github   | https://github.com/liangtaona/sqladmin  |  https://github.com/liangtaona/sqladmin-web   |
-
-
-#### å‰ç«¯æ¨¡æ¿
-
-åˆå§‹æ¨¡æ¿åŸºäºï¼š [https://github.com/PanJiaChen/vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)
-
-æ¨¡æ¿æ–‡æ¡£ï¼š [https://panjiachen.github.io/vue-element-admin-site/zh/guide/](https://panjiachen.github.io/vue-element-admin-site/zh/guide/)
-
-#### Build Setup
-``` bash
-# é…ç½®é•œåƒåŠ é€Ÿ
-npm config set registry https://registry.npm.taobao.org
-
-# å®‰è£…ä¾èµ–
+# °²×°ÒÀÀµ
 npm install
 
-# å¯åŠ¨æœåŠ¡ localhost:8013
+# ½¨Òé²»ÒªÖ±½ÓÊ¹ÓÃ cnpm °²×°ÒÀÀµ£¬»áÓĞ¸÷ÖÖ¹îÒìµÄ bug¡£¿ÉÒÔÍ¨¹ıÈçÏÂ²Ù×÷½â¾ö npm ÏÂÔØËÙ¶ÈÂıµÄÎÊÌâ
+npm install --registry=https://registry.npm.taobao.org
+
+# Æô¶¯·şÎñ
 npm run dev
-
-# æ„å»ºç”Ÿäº§ç¯å¢ƒ
-npm run build
-
-# å¦‚æœé‡åˆ° node-sass å®‰è£…æ…¢ï¼Œæˆ–è€…å®‰è£…ä¸äº†çš„é—®é¢˜ï¼Œè¯·æŸ¥çœ‹
-- https://www.ydyno.com/archives/1219.html
--
 ```
 
-#### å¸¸è§é—®é¢˜
+ä¯ÀÀÆ÷·ÃÎÊ http://localhost:80
 
-1ã€ä¾èµ–å®‰è£…å¤±è´¥
+## ·¢²¼
 
-å¯é€šè¿‡é…ç½®æ·˜å®çš„é•œåƒæºè§£å†³
+```bash
+# ¹¹½¨²âÊÔ»·¾³
+npm run build:stage
+
+# ¹¹½¨Éú²ú»·¾³
+npm run build:prod
 ```
-npm config set registry https://registry.npm.taobao.org
-```
-
-2ã€linux ç³»ç»Ÿåœ¨å®‰è£…ä¾èµ–çš„æ—¶å€™ä¼šå‡ºç° node-sass æ— æ³•å®‰è£…çš„é—®é¢˜
-
-è§£å†³æ–¹æ¡ˆï¼š
-```
-1. å•ç‹¬å®‰è£…ï¼šnpm install --unsafe-perm node-sass 
-2. ç›´æ¥ä½¿ç”¨ï¼šnpm install --unsafe-perm
-```
-
-3ã€åŠ é€Ÿnode-sasså®‰è£…
-
-https://www.ydyno.com/archives/1219.html

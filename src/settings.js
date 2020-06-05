@@ -1,38 +1,31 @@
 module.exports = {
+  title: 'SQL-ADMIN管理系统',
+
   /**
-   * @description 网站标题
+   * 是否系统布局配置
    */
-  title: 'SQL-ADMIN-后台管理',
+  showSettings: false,
+
   /**
-   * @description 是否显示 tagsView
+   * 是否显示 tagsView
    */
   tagsView: true,
+
   /**
-   * @description 固定头部
+   * 是否固定头部
    */
-  fixedHeader: true,
+  fixedHeader: false,
+
   /**
-   * @description 记住密码状态下的token在Cookie中存储的天数，默认1天
+   * 是否显示logo
    */
-  tokenCookieExpires: 1,
+  sidebarLogo: true,
+
   /**
-   * @description 记住密码状态下的密码在Cookie中存储的天数，默认1天s
+   * @type {string | array} 'production' | ['production', 'development']
+   * @description Need show err logs component.
+   * The default is only used in the production env
+   * If you want to also use it in dev, you can pass ['production', 'development']
    */
-  passCookieExpires: 1,
-  /**
-   * @description 是否只保持一个子菜单的展开
-   */
-  uniqueOpened: true,
-  /**
-   * @description token key
-   */
-  TokenKey: 'SQL-ADMIN-TOEKN',
-  /**
-   * @description 请求超时时间，毫秒（默认2分钟）
-   */
-  timeout: 1200000,
-  /**
-   * @description 是否显示logo
-   */
-  sidebarLogo: true
+  errorLog: 'production'
 }

@@ -1,27 +1,9 @@
 import request from '@/utils/request'
 
-export function add(data) {
+// 查询服务器详细
+export function getServer() {
   return request({
-    url: 'api/server',
-    method: 'post',
-    data
+    url: '/monitor/server',
+    method: 'get'
   })
 }
-
-export function del(ids) {
-  return request({
-    url: 'api/server',
-    method: 'delete',
-    data: ids
-  })
-}
-
-export function edit(data) {
-  return request({
-    url: 'api/server',
-    method: 'put',
-    data
-  })
-}
-
-export default { add, edit, del }

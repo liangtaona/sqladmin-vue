@@ -1,194 +1,210 @@
 <template>
   <div class="app-container">
-    <!--工具栏-->
-    <div class="head-container">
-      <div v-if="crud.props.searchToggle">
-        <!-- 搜索 -->
-        <el-input v-model="query.blurry" clearable size="small" placeholder="输入名称或者服务地址" style="width: 200px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
-        <rrOperation />
-      </div>
-      <crudOperation :permission="permission" />
-    </div>
-    <!--表单组件-->
-    <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" width="500px">
-      <el-form ref="form" :inline="true" :model="form" :rules="rules" size="small" label-width="80px">
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="form.name" style="width: 370px;" />
-        </el-form-item>
-        <el-form-item label="地址" prop="address">
-          <el-input v-model="form.address" style="width: 370px;" />
-        </el-form-item>
-        <el-form-item label="端口" prop="port">
-          <el-input-number v-model.number="form.port" />
-        </el-form-item>
-        <el-form-item label="排序" prop="sort">
-          <el-input-number v-model.number="form.sort" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="text" @click="crud.cancelCU">取消</el-button>
-        <el-button :loading="crud.status.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
-      </div>
-    </el-dialog>
-    <!--表格渲染-->
-    <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
-      <el-table-column type="selection" width="55" />
-      <el-table-column prop="state" label="状态" width="50px">
-        <template slot-scope="scope">
-          <el-tag
-            :type="scope.row.state === '1' ? 'success' : 'info'"
-            disable-transitions
-          >
-            <i v-if="scope.row.state === '1'" class="el-icon-success" />
-            <i v-if="scope.row.state === '0'" class="el-icon-error" />
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="name" label="名称" />
-      <el-table-column prop="address" label="地址" />
-      <el-table-column prop="port" label="端口" width="80px" align="center" />
-      <el-table-column :formatter="formatCpuRate" prop="cpuRate" label="CPU使用率" width="100px" align="center" />
-      <el-table-column prop="cpuCore" label="CPU内核数" width="100px" align="center" />
-      <el-table-column prop="memTotal" label="物理内存" align="center">
-        <template slot-scope="scope">
-          <el-row>
-            <el-col :span="24">{{ formatMem(scope.row) }}</el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-progress :percentage="percentNumber(scope.row.memUsed,scope.row.memTotal)" :status="percentStatus(scope.row.memUsed,scope.row.memTotal)" :show-text="false" />
-            </el-col>
-          </el-row>
-        </template>
-      </el-table-column>
-      <el-table-column prop="diskTotal" :formatter="formatDisk" label="磁盘使用情况" align="center">
-        <template slot-scope="scope">
-          <el-row>
-            <el-col :span="24">{{ formatDisk(scope.row) }}</el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-progress :percentage="percentNumber(scope.row.diskUsed,scope.row.diskTotal)" :status="percentStatus(scope.row.diskUsed,scope.row.diskTotal)" :show-text="false" />
-            </el-col>
-          </el-row>
-        </template>
-      </el-table-column>
-      <el-table-column prop="swapTotal" label="交换空间" align="center">
-        <template slot-scope="scope">
-          <el-row>
-            <el-col :span="24">{{ formatSwap(scope.row) }}</el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-progress :percentage="percentNumber(scope.row.swapUsed,scope.row.swapTotal)" :status="percentStatus(scope.row.swapUsed,scope.row.swapTotal)" :show-text="false" />
-            </el-col>
-          </el-row>
-        </template>
-      </el-table-column>
-      <el-table-column v-permission="['admin','server:edit','server:del']" label="操作" width="150px" align="center">
-        <template slot-scope="scope">
-          <udOperation
-            :data="scope.row"
-            :permission="permission"
-          />
-        </template>
-      </el-table-column>
-    </el-table>
-    <!--分页组件-->
-    <pagination />
+    <el-row>
+      <el-col :span="12" class="card-box">
+        <el-card>
+          <div slot="header"><span>CPU</span></div>
+          <div class="el-table el-table--enable-row-hover el-table--medium">
+            <table cellspacing="0" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th class="is-leaf"><div class="cell">属性</div></th>
+                  <th class="is-leaf"><div class="cell">值</div></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="cell">核心数</div></td>
+                  <td><div class="cell" v-if="server.cpu">{{ server.cpu.cpuNum }}</div></td>
+                </tr>
+                <tr>
+                  <td><div class="cell">用户使用率</div></td>
+                  <td><div class="cell" v-if="server.cpu">{{ server.cpu.used }}%</div></td>
+                </tr>
+                <tr>
+                  <td><div class="cell">系统使用率</div></td>
+                  <td><div class="cell" v-if="server.cpu">{{ server.cpu.sys }}%</div></td>
+                </tr>
+                <tr>
+                  <td><div class="cell">当前空闲率</div></td>
+                  <td><div class="cell" v-if="server.cpu">{{ server.cpu.free }}%</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </el-card>
+      </el-col>
+
+      <el-col :span="12" class="card-box">
+        <el-card>
+          <div slot="header"><span>内存</span></div>
+          <div class="el-table el-table--enable-row-hover el-table--medium">
+            <table cellspacing="0" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th class="is-leaf"><div class="cell">属性</div></th>
+                  <th class="is-leaf"><div class="cell">内存</div></th>
+                  <th class="is-leaf"><div class="cell">JVM</div></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="cell">总内存</div></td>
+                  <td><div class="cell" v-if="server.mem">{{ server.mem.total }}G</div></td>
+                  <td><div class="cell" v-if="server.jvm">{{ server.jvm.total }}M</div></td>
+                </tr>
+                <tr>
+                  <td><div class="cell">已用内存</div></td>
+                  <td><div class="cell" v-if="server.mem">{{ server.mem.used}}G</div></td>
+                  <td><div class="cell" v-if="server.jvm">{{ server.jvm.used}}M</div></td>
+                </tr>
+                <tr>
+                  <td><div class="cell">剩余内存</div></td>
+                  <td><div class="cell" v-if="server.mem">{{ server.mem.free }}G</div></td>
+                  <td><div class="cell" v-if="server.jvm">{{ server.jvm.free }}M</div></td>
+                </tr>
+                <tr>
+                  <td><div class="cell">使用率</div></td>
+                  <td><div class="cell" v-if="server.mem" :class="{'text-danger': server.mem.usage > 80}">{{ server.mem.usage }}%</div></td>
+                  <td><div class="cell" v-if="server.jvm" :class="{'text-danger': server.jvm.usage > 80}">{{ server.jvm.usage }}%</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </el-card>
+      </el-col>
+
+      <el-col :span="24" class="card-box">
+        <el-card>
+          <div slot="header">
+            <span>服务器信息</span>
+          </div>
+          <div class="el-table el-table--enable-row-hover el-table--medium">
+            <table cellspacing="0" style="width: 100%;">
+              <tbody>
+                <tr>
+                  <td><div class="cell">服务器名称</div></td>
+                  <td><div class="cell" v-if="server.sys">{{ server.sys.computerName }}</div></td>
+                  <td><div class="cell">操作系统</div></td>
+                  <td><div class="cell" v-if="server.sys">{{ server.sys.osName }}</div></td>
+                </tr>
+                <tr>
+                  <td><div class="cell">服务器IP</div></td>
+                  <td><div class="cell" v-if="server.sys">{{ server.sys.computerIp }}</div></td>
+                  <td><div class="cell">系统架构</div></td>
+                  <td><div class="cell" v-if="server.sys">{{ server.sys.osArch }}</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </el-card>
+      </el-col>
+
+      <el-col :span="24" class="card-box">
+        <el-card>
+          <div slot="header">
+            <span>Java虚拟机信息</span>
+          </div>
+          <div class="el-table el-table--enable-row-hover el-table--medium">
+            <table cellspacing="0" style="width: 100%;">
+              <tbody>
+                <tr>
+                  <td><div class="cell">Java名称</div></td>
+                  <td><div class="cell" v-if="server.jvm">{{ server.jvm.name }}</div></td>
+                  <td><div class="cell">Java版本</div></td>
+                  <td><div class="cell" v-if="server.jvm">{{ server.jvm.version }}</div></td>
+                </tr>
+                <tr>
+                  <td><div class="cell">启动时间</div></td>
+                  <td><div class="cell" v-if="server.jvm">{{ server.jvm.startTime }}</div></td>
+                  <td><div class="cell">运行时长</div></td>
+                  <td><div class="cell" v-if="server.jvm">{{ server.jvm.runTime }}</div></td>
+                </tr>
+                <tr>
+                  <td colspan="1"><div class="cell">安装路径</div></td>
+                  <td colspan="3"><div class="cell" v-if="server.jvm">{{ server.jvm.home }}</div></td>
+                </tr>
+                <tr>
+                  <td colspan="1"><div class="cell">项目路径</div></td>
+                  <td colspan="3"><div class="cell" v-if="server.sys">{{ server.sys.userDir }}</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </el-card>
+      </el-col>
+
+      <el-col :span="24" class="card-box">
+        <el-card>
+          <div slot="header">
+            <span>磁盘状态</span>
+          </div>
+          <div class="el-table el-table--enable-row-hover el-table--medium">
+            <table cellspacing="0" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th class="is-leaf"><div class="cell">盘符路径</div></th>
+                  <th class="is-leaf"><div class="cell">文件系统</div></th>
+                  <th class="is-leaf"><div class="cell">盘符类型</div></th>
+                  <th class="is-leaf"><div class="cell">总大小</div></th>
+                  <th class="is-leaf"><div class="cell">可用大小</div></th>
+                  <th class="is-leaf"><div class="cell">已用大小</div></th>
+                  <th class="is-leaf"><div class="cell">已用百分比</div></th>
+                </tr>
+              </thead>
+              <tbody v-if="server.sysFiles">
+                <tr v-for="sysFile in server.sysFiles">
+                  <td><div class="cell">{{ sysFile.dirName }}</div></td>
+                  <td><div class="cell">{{ sysFile.sysTypeName }}</div></td>
+                  <td><div class="cell">{{ sysFile.typeName }}</div></td>
+                  <td><div class="cell">{{ sysFile.total }}</div></td>
+                  <td><div class="cell">{{ sysFile.free }}</div></td>
+                  <td><div class="cell">{{ sysFile.used }}</div></td>
+                  <td><div class="cell" :class="{'text-danger': sysFile.usage > 80}">{{ sysFile.usage }}%</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
-import crudServer from '@/api/monitor/server'
-import CRUD, { presenter, header, form, crud } from '@crud/crud'
-import rrOperation from '@crud/RR.operation'
-import crudOperation from '@crud/CRUD.operation'
-import udOperation from '@crud/UD.operation'
-import pagination from '@crud/Pagination'
+import { getServer } from "@/api/monitor/server";
 
-const defaultForm = { id: null, address: 'localhost', name: null, ip: null, port: 8777, state: null, cpuRate: null, cpuCore: null, memTotal: null, memUsed: null, diskTotal: null, diskUsed: null, swapTotal: null, swapUsed: null, sort: 999 }
 export default {
-  name: 'ServerMonitor',
-  components: { pagination, crudOperation, rrOperation, udOperation },
-  cruds() {
-    return CRUD({ title: '监控', url: 'api/server', sort: 'sort,asc', crudMethod: { ...crudServer }})
-  },
-  mixins: [presenter(), header(), form(defaultForm), crud()],
+  name: "Server",
   data() {
     return {
-      permission: {
-        add: ['admin', 'server:add'],
-        edit: ['admin', 'server:edit'],
-        del: ['admin', 'server:del']
-      },
-      rules: {
-        name: [
-          { required: true, message: '请输入名称', trigger: 'blur' }
-        ],
-        address: [
-          { required: true, message: '请输入IP', trigger: 'blur' }
-        ],
-        port: [
-          { required: true, message: '请输入访问端口', trigger: 'blur', type: 'number' }
-        ]
-      }
-    }
+      // 加载层信息
+      loading: [],
+      // 服务器信息
+      server: []
+    };
   },
   created() {
-    this.crud.optShow.download = false
+    this.getList();
+    this.openLoading();
   },
   methods: {
-    formatCpuRate(row, column) {
-      const value = row.cpuRate
-      if (!value) {
-        return 0
-      }
-      return (Math.floor(value * 10000) / 100) + '%'
+    /** 查询服务器信息 */
+    getList() {
+      getServer().then(response => {
+        this.server = response.data;
+        this.loading.close();
+      });
     },
-    percentNumber(value, total) {
-      if (!value || !total) {
-        return 0
-      }
-      return value / total * 100
-    },
-    percentStatus(value, total) {
-      const percent = this.percentNumber(value, total)
-      if (percent < 60) {
-        return 'success'
-      } else if (percent < 90) {
-        return 'warning'
-      } else {
-        return 'exception'
-      }
-    },
-    convertToGb(num) {
-      if (!num) {
-        return '-'
-      }
-      let unit = 'G'
-      if (num > 1024) {
-        num = num / 1024
-        unit = 'T'
-      }
-      num = Math.floor(num * 100) / 100
-      return num + unit
-    },
-    formatMem(row, column) {
-      return this.convertToGb(row.memUsed) + ' / ' + this.convertToGb(row.memTotal)
-    },
-    formatDisk(row, column) {
-      return this.convertToGb(row.diskUsed) + ' / ' + this.convertToGb(row.diskTotal)
-    },
-    formatSwap(row, column) {
-      return this.convertToGb(row.swapUsed) + ' / ' + this.convertToGb(row.swapTotal)
+    // 打开加载层
+    openLoading() {
+      this.loading = this.$loading({
+        lock: true,
+        text: "拼命读取中",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
     }
   }
-}
+};
 </script>
-
-<style scoped>
-  .el-col {
-    text-align: center;
-  }
-</style>

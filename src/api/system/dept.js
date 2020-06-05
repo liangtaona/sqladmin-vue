@@ -1,35 +1,60 @@
 import request from '@/utils/request'
 
-export function getDepts(params) {
+// 查询部门列表
+export function listDept(query) {
   return request({
-    url: 'api/dept',
+    url: '/system/dept/list',
     method: 'get',
-    params
+    params: query
   })
 }
 
-export function add(data) {
+// 查询部门详细
+export function getDept(deptId) {
   return request({
-    url: 'api/dept',
+    url: '/system/dept/' + deptId,
+    method: 'get'
+  })
+}
+
+// 查询部门下拉树结构
+export function treeselect() {
+  return request({
+    url: '/system/dept/treeselect',
+    method: 'get'
+  })
+}
+
+// 根据角色ID查询部门树结构
+export function roleDeptTreeselect(roleId) {
+  return request({
+    url: '/system/dept/roleDeptTreeselect/' + roleId,
+    method: 'get'
+  })
+}
+
+// 新增部门
+export function addDept(data) {
+  return request({
+    url: '/system/dept',
     method: 'post',
-    data
+    data: data
   })
 }
 
-export function del(ids) {
+// 修改部门
+export function updateDept(data) {
   return request({
-    url: 'api/dept',
-    method: 'delete',
-    data: ids
-  })
-}
-
-export function edit(data) {
-  return request({
-    url: 'api/dept',
+    url: '/system/dept',
     method: 'put',
-    data
+    data: data
   })
 }
 
-export default { add, edit, del, getDepts }
+// 删除部门
+export function delDept(deptId) {
+  return request({
+    url: '/system/dept/' + deptId,
+    method: 'delete'
+  })
+}

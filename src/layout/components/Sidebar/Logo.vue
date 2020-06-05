@@ -14,7 +14,8 @@
 </template>
 
 <script>
-import Logo from '@/assets/images/logo.png'
+import logoImg from '@/assets/logo/logo.png'
+
 export default {
   name: 'SidebarLogo',
   props: {
@@ -25,8 +26,8 @@ export default {
   },
   data() {
     return {
-      title: 'SQL-ADMIN-后台管理',
-      logo: Logo
+      title: 'SQL-ADMIN管理系统',
+      logo: logoImg
     }
   }
 }
@@ -47,6 +48,7 @@ export default {
   width: 100%;
   height: 50px;
   line-height: 50px;
+  background: #2b2f3a;
   text-align: center;
   overflow: hidden;
 
@@ -58,7 +60,7 @@ export default {
       width: 32px;
       height: 32px;
       vertical-align: middle;
-      margin-right: 6px;
+      margin-right: 12px;
     }
 
     & .sidebar-title {
